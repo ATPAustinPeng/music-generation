@@ -46,27 +46,20 @@ class Note:
 
 
 ### Converting all messages into the note class
-### and appending them to a list with status, note value, and time.
-notes_list = []
+### and appending them to a numpy array with status, note value, and time.
+
+notes_list = np.zeros([1,3])
 
 for message in list_of_messages:
     note_temp = Note(message)
     if note_temp.velocity == 0:  # all note_on with velocity 0 is turned into note_off
         note_temp.status = "note_off"
-    notes_list.append((note_temp.status, note_temp.note, note_temp.time))
+    to_append = [note_temp.status, note_temp.note, note_temp.time]
+    notes_list = np.vstack((notes_list, to_append))
 
 print(notes_list)  # (status, value, time)
 
 
-# transforming into note blocks
-current_note = 0
-for note in notes_list:
-    current_note = note[1]
-
-
-
-
-# converting into numpy arrays
-
+# transforming time into start_time by adding up all the times that came before
 
 
