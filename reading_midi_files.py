@@ -54,12 +54,39 @@ for message in list_of_messages:
     note_temp = Note(message)
     if note_temp.velocity == 0:  # all note_on with velocity 0 is turned into note_off
         note_temp.status = "note_off"
+    if note_temp.status == "note_on":
+        note_temp.status = 1
+    elif note_temp.status == "note_off":
+        note_temp.status = 0
     to_append = [note_temp.status, note_temp.note, note_temp.time]
     notes_list = np.vstack((notes_list, to_append))
 
-print(notes_list)  # (status, value, time)
-
+# notes_list is now in (status, value, time) format.
 
 # transforming time into start_time by adding up all the times that came before
+total_time = 0
+for note in notes_list:
+    total_time += note[2]
+    note[2] = total_time
 
+print(notes_list)
 
+# puts into note blocks [pitch, start time, end time]
+
+note_blocks = np.zeros([1,3])
+for index, note in enumerate(notes_list):
+    if note[0] == 1:
+        pitch = note[1]
+        start_time = note[2]
+        i = 0
+        while True:
+            current_status = notes_list[i][0]
+            current_pitch = notes_list[i][1]
+            if current_status == 0 and current_pitch == pitch:
+                end_time = notes_list[i][2]
+                to_append1 = [pitch, start_time, end_time]
+                note_blocks = np.vstack((note_blocks, to_append1))
+                break
+            i += 1
+
+print(note_blocks)
